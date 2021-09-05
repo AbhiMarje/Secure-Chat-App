@@ -67,6 +67,7 @@ public class ChatActivity extends Status {
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
+        Global.init();
         loadReceiverData();
         listenMessage();
         setListeners();
@@ -94,7 +95,7 @@ public class ChatActivity extends Status {
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.senderId = documentChange.getDocument().getString("senderId");
                     chatMessage.receiverId = documentChange.getDocument().getString("receiverId");
-                    chatMessage.message = documentChange.getDocument().getString("message");
+                    chatMessage.message = Global.decrypt(documentChange.getDocument().getString("message"));
                     chatMessage.dataTime = Date(documentChange.getDocument().getDate("timeStamp"));
                     chatMessage.dateObject = documentChange.getDocument().getDate("timeStamp");
                     arrayList.add(chatMessage);
@@ -119,12 +120,12 @@ public class ChatActivity extends Status {
         HashMap<String, Object> message = new HashMap<>();
         message.put("senderId", auth.getUid());
         message.put("receiverId", receiverUser.getUid());
-        message.put("message", binding.chatScreenInput.getText().toString().trim());
+        message.put("message", Global.encrypt(binding.chatScreenInput.getText().toString().trim()));
         message.put("timeStamp", new Date());
-        String msg = binding.chatScreenInput.getText().toString().trim();
+        String msg = Global.encrypt(binding.chatScreenInput.getText().toString().trim());
         firestore.collection("chat").add(message);
         if (conversationId != null) {
-            updateConversation(binding.chatScreenInput.getText().toString().trim());
+            updateConversation(Global.encrypt(binding.chatScreenInput.getText().toString().trim()));
         }else {
             HashMap<String , Object> conversation = new HashMap<>();
             conversation.put("senderId", auth.getUid());

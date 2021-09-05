@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.securechatapp.R;
 import com.example.securechatapp.activities.ChatActivity;
+import com.example.securechatapp.utilities.Global;
 import com.example.securechatapp.utilities.UserList;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -36,6 +37,7 @@ public class MessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         UserList userList = new UserList();
+        Global.init();
         userList.setUid(remoteMessage.getData().get("userId"));
         userList.setName(remoteMessage.getData().get("userName"));
         userList.setFcmToken(remoteMessage.getData().get("fcmToken"));
@@ -49,8 +51,8 @@ public class MessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel);
         builder.setSmallIcon(R.drawable.ic_baseline_notifications_24);
         builder.setContentTitle(userList.getName());
-        builder.setContentText(remoteMessage.getData().get("message"));
-        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getData().get("message")));
+        builder.setContentText(Global.decrypt(remoteMessage.getData().get("message")));
+        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(Global.decrypt(remoteMessage.getData().get("message"))));
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(true);

@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import com.example.securechatapp.R;
 import com.example.securechatapp.utilities.ChatAdapter;
 import com.example.securechatapp.utilities.ChatMessage;
+import com.example.securechatapp.utilities.Global;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         progressBar = (ProgressBar) view.findViewById(R.id.homeScreenProgressBar);
 
+        Global.init();
         listenConversation();
 
 
@@ -84,7 +86,7 @@ public class HomeFragment extends Fragment {
                         chatMessage.chatName = change.getDocument().getString("senderName");
                         chatMessage.chatId = change.getDocument().getString("senderId");
                     }
-                    chatMessage.message = change.getDocument().getString("recentMsg");
+                    chatMessage.message = Global.decrypt(change.getDocument().getString("recentMsg"));
                     chatMessage.dateObject = change.getDocument().getDate("timeStamp");
                     arrayList.add(chatMessage);
                 } else if (change.getType() == DocumentChange.Type.MODIFIED) {
@@ -92,7 +94,7 @@ public class HomeFragment extends Fragment {
                         String senderId = change.getDocument().getString("senderId");
                         String receiverId = change.getDocument().getString("receiverId");
                         if (arrayList.get(i).senderId.equals(senderId) && arrayList.get(i).receiverId.equals(receiverId)) {
-                            arrayList.get(i).message = change.getDocument().getString("recentMsg");
+                            arrayList.get(i).message = Global.decrypt(change.getDocument().getString("recentMsg"));
                             arrayList.get(i).dateObject = change.getDocument().getDate("timeStamp");
                             break;
                         }
