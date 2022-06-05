@@ -1,17 +1,23 @@
 package com.example.securechatapp.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.securechatapp.R;
 import com.example.securechatapp.databinding.ActivitySignInBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -30,6 +36,37 @@ public class SignInActivity extends AppCompatActivity {
             startActivity(i);
         }
         setListeners();
+
+    }
+
+
+    private void getDeviceInfo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignInActivity.this);
+        String[] array = {
+        "Product: " + Build.PRODUCT,
+        "Brand: " + Build.BRAND,
+        "Device: " + Build.DEVICE,
+        "Board: " + Build.BOARD,
+        "Bootloader: " + Build.BOOTLOADER,
+        "Display: " + Build.DISPLAY,
+        "Fingerprint: " + Build.FINGERPRINT,
+        "Hardware: " + Build.HARDWARE,
+        "Host: " + Build.HOST,
+        "ID: " + Build.ID,
+        "Manufacturer: " + Build.MANUFACTURER,
+        "Model: " + Build.MODEL,
+        "Tags: " + Build.TAGS,
+        "Type: " + Build.TYPE,
+        "User: " + Build.USER,
+        "Time: " + Build.TIME};
+        builder.setTitle("Device Information")
+                .setItems(array, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 
@@ -59,6 +96,13 @@ public class SignInActivity extends AppCompatActivity {
         binding.buttonSignIn.setOnClickListener(v -> {
             if (isValidSignInDetails()){
                 signIn();
+            }
+        });
+
+        binding.deviceInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDeviceInfo();
             }
         });
     }
